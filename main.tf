@@ -89,9 +89,7 @@ resource "aws_lb_listener_rule" "main" {
 
   condition {
     host_header {
-      values = [
-        var.component == "frontend" ? "${var.env}.pavansai.online" : "${var.component}-${var.env}.pavansai.online"
-      ]
+      values = [var.component == "frontend" ? "${var.env}.pavansai.online" : "${var.component}-${var.env}.pavansai.online"]
     }
   }
 }
@@ -111,4 +109,21 @@ resource "aws_lb_target_group_attachment" "public" {
   target_id         = element(tolist(data.dns_a_record_set.private_alb.addrs), count.index)
   port              = 80
   availability_zone = "all"
+}
+
+resource "aws_lb_listener_rule" "public" {
+  count        = var.component == "frontend" ? 1 : 0
+  listener_arn = var.private_listener
+  priority     = var.lb_priority
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.public[0].arn
+  }
+
+  condition {
+    host_header {
+      values = ["${var.env}.pavansai.online"]
+    }
+  }
 }
