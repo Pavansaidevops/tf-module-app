@@ -13,8 +13,8 @@ resource "aws_security_group" "main" {
   }
   ingress {
     description        = "SSH"
-    from_port          = 5672
-    to_port            = 5672
+    from_port          = 22
+    to_port            = 22
     protocol           = "tcp"
     cidr_blocks        = var.ssh_ingress_cidr
   }
@@ -35,6 +35,7 @@ resource "aws_launch_template" "main" {
   user_data              = base64encode(templatefile("${path.module}/userdata.sh",
     {
      component = var.component
+     env       = var.env
     }))
 
   tag_specifications {
