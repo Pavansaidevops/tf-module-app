@@ -174,5 +174,5 @@ resource "aws_iam_role" "main" {
       },
     ]
   })
-  tags          = merge(local.tags, { Name = "${local.name_prefix}-ec2" })
+  tags          = merge(local.tags, { Name = "${local.name_prefix}-role" })
 }
